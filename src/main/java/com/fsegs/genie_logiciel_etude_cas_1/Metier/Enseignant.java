@@ -1,8 +1,9 @@
 package com.fsegs.genie_logiciel_etude_cas_1.Metier;
 
-import com.fsegs.genie_logiciel_etude_cas_1.Metier.Enumerations.Surveillant;
+import com.fsegs.genie_logiciel_etude_cas_1.Metier.Enumerations.EtatSurveillant;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.context.annotation.Bean;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -23,7 +24,7 @@ public class Enseignant extends Utilisateur {
     private String username;
     private String password;
 
-    private Surveillant surveillant;
+    private EtatSurveillant etatSurveillant;
 
     @ManyToOne
     private Grade grade;

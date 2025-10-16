@@ -1,11 +1,14 @@
 package com.fsegs.genie_logiciel_etude_cas_1.Controlleurs;
 
+import com.fsegs.genie_logiciel_etude_cas_1.Exceptions.Grade.GradePasTrouveeException;
 import com.fsegs.genie_logiciel_etude_cas_1.Exceptions.Utilisateur.UtilisateurPasTrouveeException;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.DTO.EnseignantDTO;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.DTO.UtilisateurDTO;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.Enseignant;
-import com.fsegs.genie_logiciel_etude_cas_1.Metier.Enumerations.Surveillant;
+import com.fsegs.genie_logiciel_etude_cas_1.Metier.Enumerations.EtatSurveillant;
+import com.fsegs.genie_logiciel_etude_cas_1.Metier.Grade;
 import com.fsegs.genie_logiciel_etude_cas_1.Repertoires.EnseignantRep;
+import com.fsegs.genie_logiciel_etude_cas_1.Repertoires.GradeRep;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,6 +24,8 @@ public class EnseignantControlleur {
     private EnseignantRep enseignantRep;
 
     private Logger logger = Logger.getLogger(Enseignant.class.getName());
+    @Autowired
+    private GradeRep gradeRep;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(UtilisateurDTO details) {
@@ -38,18 +43,23 @@ public class EnseignantControlleur {
     public ResponseEntity<?> register(@Valid @RequestBody EnseignantDTO details) {
         try {
             // Enseignant uh .. new something im tired
+
+            Grade er = gradeRep.findById(details.gradeId).orElseThrow(()->new GradePasTrouveeException("grade pas trouvee"));
+
             Enseignant nouvel = new Enseignant();
             //logger.info(String.valueOf(details.tel));
             nouvel.setUsername(details.username);
             nouvel.setPassword(details.password);
             nouvel.setNom(details.nom);
             nouvel.setPrenom(details.prenom);
-            nouvel.setGrade(details.grade);
+
+            nouvel.setGrade(er);
             nouvel.setTel(details.tel);
-            nouvel.setSurveillant(Surveillant.PAS_SURVEILLANT); // par default
+            nouvel.setEtatSurveillant(EtatSurveillant.PAS_SURVEILLANT); // par default
 
             enseignantRep.save(nouvel);
             logger.info("Enseignant cree avec succes" + nouvel.getNom());
+
             return new ResponseEntity<>(details, HttpStatus.OK);
         } catch (Exception exception) {
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.UNAUTHORIZED);
@@ -68,7 +78,7 @@ public class EnseignantControlleur {
             tourve.setPrenom(details.prenom);
             tourve.setGrade(details.grade);
             tourve.setTel(details.tel);
-            tourve.setSurveillant(details.surveillant);
+            tourve.setEtatSurveillant(details.etatSurveillant);
 
             enseignantRep.save(tourve);
 

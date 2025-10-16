@@ -1,5 +1,7 @@
 package com.fsegs.genie_logiciel_etude_cas_1.Exceptions;
 
+import com.fsegs.genie_logiciel_etude_cas_1.Exceptions.Grade.GradeMetadonneeException;
+import com.fsegs.genie_logiciel_etude_cas_1.Exceptions.Seance.SeancePasTrouveeException;
 import com.fsegs.genie_logiciel_etude_cas_1.Exceptions.Utilisateur.UtilisateurMetadonneeException;
 import com.fsegs.genie_logiciel_etude_cas_1.Exceptions.Utilisateur.UtilisateurPasTrouveeException;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,16 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UtilisateurPasTrouveeException.class)
     public ResponseEntity<?> handleUtilisateurPasTrouveeException(UtilisateurPasTrouveeException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(GradeMetadonneeException.class)
+    public ResponseEntity<?> handleGradeMetadonneeException(GradeMetadonneeException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(SeancePasTrouveeException.class)
+    public ResponseEntity<?> handleSeancePasTrouveeException(SeancePasTrouveeException e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

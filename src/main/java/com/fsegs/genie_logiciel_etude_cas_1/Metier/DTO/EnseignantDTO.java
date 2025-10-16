@@ -1,7 +1,6 @@
 package com.fsegs.genie_logiciel_etude_cas_1.Metier.DTO;
 
-import com.fsegs.genie_logiciel_etude_cas_1.Metier.Enumerations.Surveillant;
-import com.fsegs.genie_logiciel_etude_cas_1.Metier.Grade;
+import com.fsegs.genie_logiciel_etude_cas_1.Metier.Enumerations.EtatSurveillant;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.Matiere;
 import jakarta.validation.constraints.Min;
 import org.hibernate.validator.constraints.NotBlank;
@@ -17,8 +16,8 @@ public class EnseignantDTO {
         @Min(value=10000000, message = "Minimum de 8 characteres")
         public int tel;
         public String prenom;
-        public Grade grade;
+        public int gradeId;
         public Set<Matiere> matiere;
-        public Surveillant surveillant;
+        public EtatSurveillant etatSurveillant;
 
 }
