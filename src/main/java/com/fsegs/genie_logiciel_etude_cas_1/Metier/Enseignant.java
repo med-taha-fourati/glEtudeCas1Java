@@ -11,7 +11,6 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @RequiredArgsConstructor
-@NoArgsConstructor
 @Entity
 public class Enseignant extends Utilisateur {
     @Id
@@ -21,6 +20,8 @@ public class Enseignant extends Utilisateur {
     private String nom;
     private String prenom;
     private int tel;
+    private String username;
+    private String password;
 
     private Surveillant surveillant;
 
@@ -28,7 +29,7 @@ public class Enseignant extends Utilisateur {
     private Grade grade;
 
     @ManyToMany
-    private Set<Matiere> matieres;
+    private Set<Matiere> matieres = new  HashSet<>();
 
     @Transient
     private int M = calculerM();

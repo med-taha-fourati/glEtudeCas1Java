@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -19,5 +20,5 @@ public class Grade {
     private int chargeSurveillance;
 
     @OneToMany(mappedBy = "grade")
-    private Set<Enseignant> enseignants;
+    private Set<Enseignant> enseignants = new HashSet<>();
 }

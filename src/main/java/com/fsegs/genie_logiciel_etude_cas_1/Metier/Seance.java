@@ -22,8 +22,8 @@ public class Seance {
     @ManyToMany
     private Map<Integer, Enseignant> enseignants = new HashMap<>(N);
 
-    @OneToMany(mappedBy = "matiere")
-    private Set<Matiere> matieres;
+    @OneToMany(mappedBy = "seance")
+    private Set<Matiere> matieres = new HashSet<>();
 
     @ManyToOne
     private Horaire horaire;
