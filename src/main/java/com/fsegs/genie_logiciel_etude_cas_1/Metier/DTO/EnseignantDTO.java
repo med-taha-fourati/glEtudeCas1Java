@@ -1,5 +1,6 @@
 package com.fsegs.genie_logiciel_etude_cas_1.Metier.DTO;
 
+import com.fsegs.genie_logiciel_etude_cas_1.Metier.Enumerations.Surveillant;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.Grade;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.Matiere;
 
@@ -11,6 +12,7 @@ public record EnseignantDTO(String username,
                             int tel,
                             String prenom,
                             Grade grade,
-                            Set<Matiere> matiere
+                            Set<Matiere> matiere,
+                            Surveillant surveillant
                             ) {
 }

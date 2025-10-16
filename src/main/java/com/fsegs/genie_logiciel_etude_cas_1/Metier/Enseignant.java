@@ -1,5 +1,6 @@
 package com.fsegs.genie_logiciel_etude_cas_1.Metier;
 
+import com.fsegs.genie_logiciel_etude_cas_1.Metier.Enumerations.Surveillant;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,6 +21,8 @@ public class Enseignant extends Utilisateur {
     private String nom;
     private String prenom;
     private int tel;
+
+    private Surveillant surveillant;
 
     @ManyToOne
     private Grade grade;
