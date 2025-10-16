@@ -4,6 +4,7 @@ import com.fsegs.genie_logiciel_etude_cas_1.Exceptions.UtilisateurPasTrouveeExce
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.DTO.EnseignantDTO;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.DTO.UtilisateurDTO;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.Enseignant;
+import com.fsegs.genie_logiciel_etude_cas_1.Metier.Utilisateur;
 import com.fsegs.genie_logiciel_etude_cas_1.Repertoires.EnseignantRep;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
@@ -28,7 +29,6 @@ public class EnseignantControlleur {
             Enseignant trouve = enseignantRep
                     .findAllByUsername(details.username())
                     .orElseThrow(() -> new UtilisateurPasTrouveeException("pas trouvee"));
-
             return new ResponseEntity<>(trouve, HttpStatus.OK);
         } catch (Exception exception) {
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.UNAUTHORIZED);
@@ -39,6 +39,13 @@ public class EnseignantControlleur {
     public ResponseEntity<?> register(EnseignantDTO details) {
         try {
             // Enseignant uh .. new something im tired
+            Enseignant nouvel = new Enseignant();
+            nouvel.setUsername(details.username());
+            nouvel.setPassword(details.password());
+            nouvel.setNom(details.nom());
+            nouvel.setPrenom(details.prenom());
+            nouvel.setGrade(details.grade());
+
             return new ResponseEntity<>(details, HttpStatus.OK);
         } catch (Exception exception) {
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.UNAUTHORIZED);
