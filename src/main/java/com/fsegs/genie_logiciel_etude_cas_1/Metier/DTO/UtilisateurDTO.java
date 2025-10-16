@@ -1,4 +1,6 @@
 package com.fsegs.genie_logiciel_etude_cas_1.Metier.DTO;
 
-public record UtilisateurDTO(String username, String password) {
+public class UtilisateurDTO {
+    public String username;
+    public String password;
 }

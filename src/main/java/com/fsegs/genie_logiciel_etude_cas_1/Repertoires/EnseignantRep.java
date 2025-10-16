@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface EnseignantRep extends JpaRepository<Enseignant, Integer> {
     Optional<Enseignant> findAllByUsername(String username);
+    Optional<Enseignant> findAllByUsernameAndPassword(String username, String password);
 }
