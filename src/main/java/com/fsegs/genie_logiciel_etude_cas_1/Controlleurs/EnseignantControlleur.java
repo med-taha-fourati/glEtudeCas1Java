@@ -15,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 @RestController
@@ -27,11 +29,22 @@ public class EnseignantControlleur {
     @Autowired
     private GradeRep gradeRep;
 
+    @GetMapping("/fetch")
+    public ResponseEntity<List<Enseignant>> fetchEnseignant() {
+        try {
+            ArrayList<Enseignant> enseignants = (ArrayList<Enseignant>) enseignantRep.findAll();
+            logger.info("/fetch yielded: " + enseignants.size());
+            return new ResponseEntity<>(enseignants, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new ArrayList<Enseignant>(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @PostMapping("/login")
     public ResponseEntity<?> login(UtilisateurDTO details) {
         try {
             Enseignant trouve = enseignantRep
-                    .findAllByUsernameAndPassword(details.username, details.password)
+                    .findByUsernameAndPassword(details.username, details.password)
                     .orElseThrow(() -> new UtilisateurPasTrouveeException("pas trouvee"));
             return new ResponseEntity<>(trouve, HttpStatus.OK);
         } catch (Exception exception) {
@@ -72,11 +85,13 @@ public class EnseignantControlleur {
             Enseignant tourve = enseignantRep.findById(id).orElseThrow(
                     () -> new UtilisateurPasTrouveeException("pas trouvee")
             );
+
+            Grade trove = gradeRep.findById(tourve.getGrade().getId()).orElseThrow(()->new GradePasTrouveeException("grade pas trouvee"));
             tourve.setUsername(details.username);
             tourve.setPassword(details.password);
             tourve.setNom(details.nom);
             tourve.setPrenom(details.prenom);
-            tourve.setGrade(details.grade);
+            tourve.setGrade(trove);
             tourve.setTel(details.tel);
             tourve.setEtatSurveillant(details.etatSurveillant);
 

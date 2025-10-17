@@ -30,7 +30,7 @@ public class SeanceController {
 
             Seance seance = new Seance();
             seance.setHoraire(horaireTrv);
-            seance.setDate(seanceDTO.date);
+            seance.setSeanceDate(seanceDTO.date);
 
             //NOTE: calculation of the N thing for the enseignants
             seanceRep.save(seance);
@@ -50,7 +50,7 @@ public class SeanceController {
             Horaire horaireTrv = horaireRep.findById(seance.horaireId).orElseThrow(()->new Exception());
 
             touvee.setHoraire(horaireTrv);
-            touvee.setDate(seance.date);
+            touvee.setSeanceDate(seance.date);
 
             seanceRep.save(touvee);
 

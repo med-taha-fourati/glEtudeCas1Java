@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface EnseignantRep extends JpaRepository<Enseignant, Integer> {
-    Optional<Enseignant> findAllByUsername(String username);
-    Optional<Enseignant> findAllByUsernameAndPassword(String username, String password);
+    Optional<Enseignant> findByUsername(String username);
+    Optional<Enseignant> findByUsernameAndPassword(String username, String password);
 }

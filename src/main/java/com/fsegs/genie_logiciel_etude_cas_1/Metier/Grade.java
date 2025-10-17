@@ -1,10 +1,12 @@
 package com.fsegs.genie_logiciel_etude_cas_1.Metier;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.util.HashSet;
@@ -13,12 +15,15 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(exclude = {"enseignants"})
 @Entity
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Grade {
     @Id private int id;
     private int grade;
     private int chargeSurveillance;
 
-    @OneToMany(mappedBy = "grade")
+    @OneToMany(mappedBy = "grade", fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"grade", "matieres", "seances"})
     private Set<Enseignant> enseignants = new HashSet<>();
 }
