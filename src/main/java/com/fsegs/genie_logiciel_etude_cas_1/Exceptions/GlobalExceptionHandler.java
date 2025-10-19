@@ -1,6 +1,10 @@
 package com.fsegs.genie_logiciel_etude_cas_1.Exceptions;
 
 import com.fsegs.genie_logiciel_etude_cas_1.Exceptions.Grade.GradeMetadonneeException;
+import com.fsegs.genie_logiciel_etude_cas_1.Exceptions.Horaire.HoraireMetadonneeException;
+import com.fsegs.genie_logiciel_etude_cas_1.Exceptions.Horaire.HorairePasTrouveeException;
+import com.fsegs.genie_logiciel_etude_cas_1.Exceptions.Matiere.MatiereMetadonneeException;
+import com.fsegs.genie_logiciel_etude_cas_1.Exceptions.Matiere.MatierePasTrouveeException;
 import com.fsegs.genie_logiciel_etude_cas_1.Exceptions.Seance.SeancePasTrouveeException;
 import com.fsegs.genie_logiciel_etude_cas_1.Exceptions.Utilisateur.UtilisateurMetadonneeException;
 import com.fsegs.genie_logiciel_etude_cas_1.Exceptions.Utilisateur.UtilisateurPasTrouveeException;
@@ -28,6 +32,26 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(SeancePasTrouveeException.class)
     public ResponseEntity<?> handleSeancePasTrouveeException(SeancePasTrouveeException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(HoraireMetadonneeException.class)
+    public ResponseEntity<?> handleHoraireMetadonneeException(HoraireMetadonneeException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(HorairePasTrouveeException.class)
+    public ResponseEntity<?> handleHorairePasTrouveeException(HorairePasTrouveeException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(MatiereMetadonneeException.class)
+    public ResponseEntity<?> handleMatiereMetadonneeException(MatiereMetadonneeException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(MatiereMetadonneeException.class)
+    public ResponseEntity<?> handleMatierePasTrouveeException(MatierePasTrouveeException e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

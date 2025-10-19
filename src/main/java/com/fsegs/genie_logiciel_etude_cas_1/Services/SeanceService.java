@@ -12,9 +12,7 @@ public class SeanceService {
         this.seanceRep = seanceRep;
     }
 
-    @Bean
-    public int calculerN() {
-        Seance seance = new Seance();
+    public int calculerN(Seance seance) {
         return seance.calculerN();
     }
 }

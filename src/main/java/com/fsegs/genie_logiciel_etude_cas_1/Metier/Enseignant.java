@@ -1,6 +1,7 @@
 package com.fsegs.genie_logiciel_etude_cas_1.Metier;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.Enumerations.EtatSurveillant;
@@ -39,6 +40,7 @@ public class Enseignant extends Utilisateur {
     private Set<Matiere> matieres = new  HashSet<>();
 
     @Transient
+    @JsonIgnore
     private int M = calculerM();
 
     @ManyToMany(fetch = FetchType.LAZY)

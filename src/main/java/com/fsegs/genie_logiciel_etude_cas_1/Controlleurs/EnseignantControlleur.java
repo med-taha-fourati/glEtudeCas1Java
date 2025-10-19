@@ -9,7 +9,10 @@ import com.fsegs.genie_logiciel_etude_cas_1.Metier.Enumerations.EtatSurveillant;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.Grade;
 import com.fsegs.genie_logiciel_etude_cas_1.Repertoires.EnseignantRep;
 import com.fsegs.genie_logiciel_etude_cas_1.Repertoires.GradeRep;
+import com.fsegs.genie_logiciel_etude_cas_1.Services.EnseignantService;
 import jakarta.validation.Valid;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,21 +22,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+@Slf4j
 @RestController
 @RequestMapping("/enseignant")
 public class EnseignantControlleur {
     @Autowired
     private EnseignantRep enseignantRep;
-
-    private Logger logger = Logger.getLogger(Enseignant.class.getName());
     @Autowired
     private GradeRep gradeRep;
+
+    private final EnseignantService enseignantService;
+    public EnseignantControlleur(EnseignantService enseignantService) {
+        this.enseignantService = enseignantService;
+    }
 
     @GetMapping("/fetch")
     public ResponseEntity<List<Enseignant>> fetchEnseignant() {
         try {
             ArrayList<Enseignant> enseignants = (ArrayList<Enseignant>) enseignantRep.findAll();
-            logger.info("/fetch yielded: " + enseignants.size());
+
+            log.info("/fetch yielded: {} ", enseignants.size());
+
             return new ResponseEntity<>(enseignants, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(new ArrayList<Enseignant>(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -70,8 +79,13 @@ public class EnseignantControlleur {
             nouvel.setTel(details.tel);
             nouvel.setEtatSurveillant(EtatSurveillant.PAS_SURVEILLANT); // par default
 
+            //NOTE: for further testing
+            nouvel.setM(enseignantService.calculerM(nouvel));
+
             enseignantRep.save(nouvel);
-            logger.info("Enseignant cree avec succes" + nouvel.getNom());
+
+            log.info("Enseignant cree avec succes {}", nouvel.getNom());
+
 
             return new ResponseEntity<>(details, HttpStatus.OK);
         } catch (Exception exception) {
