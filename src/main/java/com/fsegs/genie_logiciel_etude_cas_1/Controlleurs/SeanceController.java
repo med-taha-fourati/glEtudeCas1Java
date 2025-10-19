@@ -1,6 +1,7 @@
 package com.fsegs.genie_logiciel_etude_cas_1.Controlleurs;
 
 import com.fsegs.genie_logiciel_etude_cas_1.Exceptions.Grade.GradePasTrouveeException;
+import com.fsegs.genie_logiciel_etude_cas_1.Exceptions.Seance.SeancePasTrouveeException;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.DTO.GradeDTO;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.DTO.SeanceDTO;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.Grade;
@@ -8,6 +9,7 @@ import com.fsegs.genie_logiciel_etude_cas_1.Metier.Horaire;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.Seance;
 import com.fsegs.genie_logiciel_etude_cas_1.Repertoires.HoraireRep;
 import com.fsegs.genie_logiciel_etude_cas_1.Repertoires.SeanceRep;
+import com.fsegs.genie_logiciel_etude_cas_1.Services.SeanceService;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
@@ -23,16 +25,23 @@ public class SeanceController {
     @Autowired
     private HoraireRep horaireRep;
 
+    private final SeanceService seanceService;
+    public SeanceController(SeanceService seanceService) {
+        this.seanceService = seanceService;
+    }
+
     @PostMapping("/add")
     public ResponseEntity<?> addSeance(@RequestBody SeanceDTO seanceDTO) {
         try {
-            Horaire horaireTrv = horaireRep.findById(seanceDTO.horaireId).orElseThrow(()->new Exception());
+            Horaire horaireTrv = horaireRep.findById(seanceDTO.horaireId).orElseThrow(()->new SeancePasTrouveeException("seance pas trouvee"));
 
             Seance seance = new Seance();
             seance.setHoraire(horaireTrv);
             seance.setSeanceDate(seanceDTO.date);
 
             //NOTE: calculation of the N thing for the enseignants
+            seance.setN(seanceService.calculerN(seance));
+
             seanceRep.save(seance);
 
             return new ResponseEntity<>(seance, HttpStatus.OK);
@@ -47,7 +56,7 @@ public class SeanceController {
         try {
             Seance touvee = seanceRep.findById(id)
                     .orElseThrow(() -> new GradePasTrouveeException("Grade pas trouve"));
-            Horaire horaireTrv = horaireRep.findById(seance.horaireId).orElseThrow(()->new Exception());
+            Horaire horaireTrv = horaireRep.findById(seance.horaireId).orElseThrow(()->new SeancePasTrouveeException("seance pas trouvee"));
 
             touvee.setHoraire(horaireTrv);
             touvee.setSeanceDate(seance.date);

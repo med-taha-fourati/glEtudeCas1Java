@@ -50,8 +50,9 @@ public class EnseignantControlleur {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(UtilisateurDTO details) {
+    public ResponseEntity<?> login(@Valid @RequestBody UtilisateurDTO details) {
         try {
+            log.debug("username: {} password: {}", details.username, details.password);
             Enseignant trouve = enseignantRep
                     .findByUsernameAndPassword(details.username, details.password)
                     .orElseThrow(() -> new UtilisateurPasTrouveeException("pas trouvee"));

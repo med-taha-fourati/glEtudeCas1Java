@@ -50,7 +50,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(MatiereMetadonneeException.class)
+    @ExceptionHandler(MatierePasTrouveeException.class)
     public ResponseEntity<?> handleMatierePasTrouveeException(MatierePasTrouveeException e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
