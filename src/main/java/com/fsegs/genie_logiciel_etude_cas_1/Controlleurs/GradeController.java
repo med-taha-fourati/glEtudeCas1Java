@@ -4,17 +4,42 @@ import com.fsegs.genie_logiciel_etude_cas_1.Exceptions.Grade.GradePasTrouveeExce
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.DTO.GradeDTO;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.Grade;
 import com.fsegs.genie_logiciel_etude_cas_1.Repertoires.GradeRep;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RequestMapping("/grade")
 @RestController
 public class GradeController {
     @Autowired
     GradeRep gradeRep;
+
+    @GetMapping("/")
+    public ResponseEntity<List<Grade>> fetchGrade() {
+        try {
+            ArrayList<Grade> grades = (ArrayList<Grade>) gradeRep.findAll();
+
+            return new ResponseEntity<>(grades, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/fetch")
+    public ResponseEntity<Grade> fetchGradeId(@Valid @RequestParam Integer gradeId) {
+        try {
+            Grade gradeTrv = gradeRep.findById(gradeId).orElseThrow(()-> new GradePasTrouveeException("grade pas trouvee"));
+            return new ResponseEntity<Grade>(gradeTrv, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     @PostMapping("/add")
     public Grade addGrade(@RequestBody GradeDTO grade) {

@@ -31,6 +31,7 @@ public class Seance {
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "seances")
     @JsonIgnoreProperties({"seances", "matieres", "grade"})
+    @JsonIgnore
     private Set<Enseignant> enseignants = new HashSet<>();
 
     @OneToMany(mappedBy = "seance", fetch = FetchType.LAZY)

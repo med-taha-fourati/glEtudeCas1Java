@@ -1,6 +1,7 @@
 package com.fsegs.genie_logiciel_etude_cas_1.Metier;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
@@ -25,5 +26,6 @@ public class Grade {
 
     @OneToMany(mappedBy = "grade", fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"grade", "matieres", "seances"})
+    @JsonIgnore
     private Set<Enseignant> enseignants = new HashSet<>();
 }
