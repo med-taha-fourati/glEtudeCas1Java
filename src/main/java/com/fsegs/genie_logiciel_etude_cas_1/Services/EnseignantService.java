@@ -13,6 +13,7 @@ public class EnseignantService {
         this.enseignantRep = enseignantRep;
     }
 
+    @Bean
     public int calculerM(Enseignant enseignant) {
         return enseignant.calculerM();
     }
