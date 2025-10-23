@@ -38,8 +38,9 @@ public class Seance {
     @JsonIgnoreProperties({"seance", "enseignants"})
     private Set<Matiere> matieres = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    //@ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"seances"})
+    @Embedded
     private Horaire horaire;
 
     public int calculerN() {

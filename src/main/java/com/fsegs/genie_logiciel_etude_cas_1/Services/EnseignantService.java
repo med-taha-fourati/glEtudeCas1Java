@@ -9,11 +9,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class EnseignantService {
     private final EnseignantRep enseignantRep;
+    private Enseignant ens;
     public EnseignantService(EnseignantRep enseignantRep) {
         this.enseignantRep = enseignantRep;
     }
 
-    @Bean
     public int calculerM(Enseignant enseignant) {
         return enseignant.calculerM();
     }
