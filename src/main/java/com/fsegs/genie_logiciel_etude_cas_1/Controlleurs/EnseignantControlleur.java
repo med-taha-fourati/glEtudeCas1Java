@@ -7,15 +7,18 @@ import com.fsegs.genie_logiciel_etude_cas_1.Metier.DTO.UtilisateurDTO;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.Enseignant;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.Enumerations.EtatSurveillant;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.Grade;
+import com.fsegs.genie_logiciel_etude_cas_1.Middleware.JWTUtil;
 import com.fsegs.genie_logiciel_etude_cas_1.Repertoires.EnseignantRep;
 import com.fsegs.genie_logiciel_etude_cas_1.Repertoires.GradeRep;
 import com.fsegs.genie_logiciel_etude_cas_1.Services.EnseignantService;
+import com.fsegs.genie_logiciel_etude_cas_1.Services.UserRoleService;
 import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -30,10 +33,14 @@ public class EnseignantControlleur {
     private EnseignantRep enseignantRep;
     @Autowired
     private GradeRep gradeRep;
+    @Autowired
+    private JWTUtil jwtUtil;
 
     private final EnseignantService enseignantService;
-    public EnseignantControlleur(EnseignantService enseignantService) {
+    private final UserRoleService userRoleService;
+    public EnseignantControlleur(UserRoleService userRoleService, EnseignantService enseignantService) {
         this.enseignantService = enseignantService;
+        this.userRoleService = userRoleService;
     }
 
     @GetMapping("/fetch")
@@ -41,7 +48,7 @@ public class EnseignantControlleur {
         try {
             ArrayList<Enseignant> enseignants = (ArrayList<Enseignant>) enseignantRep.findAll();
 
-            log.info("/fetch yielded: {} ", enseignants.size());
+            log.info("endpoint /fetch yielded: {} ", enseignants.size());
 
             return new ResponseEntity<>(enseignants, HttpStatus.OK);
         } catch (Exception e) {
@@ -53,10 +60,21 @@ public class EnseignantControlleur {
     public ResponseEntity<?> login(@Valid @RequestBody UtilisateurDTO details) {
         try {
             log.debug("username: {} password: {}", details.username, details.password);
+            // to be deleted
             Enseignant trouve = enseignantRep
                     .findByUsernameAndPassword(details.username, details.password)
                     .orElseThrow(() -> new UtilisateurPasTrouveeException("pas trouvee"));
-            return new ResponseEntity<>(trouve, HttpStatus.OK);
+
+            // verify with jwt
+            UserDetails trouveeDetails = userRoleService.loadUserByUsername(details.username);
+            if (trouveeDetails == null) {
+                throw new UtilisateurPasTrouveeException("pas trouvee");
+            }
+
+            // generateToken
+            String token = jwtUtil.generateToken(trouveeDetails.getUsername());
+
+            return new ResponseEntity<>(token, HttpStatus.OK);
         } catch (Exception exception) {
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.UNAUTHORIZED);
         }

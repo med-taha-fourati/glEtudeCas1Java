@@ -5,11 +5,12 @@ import com.fsegs.genie_logiciel_etude_cas_1.Metier.Enseignant;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.Utilisateur;
 import com.fsegs.genie_logiciel_etude_cas_1.Repertoires.EnseignantRep;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserRoleService {
+public class UserRoleService implements UserDetailsService {
     private EnseignantRep userRepository;
 
     public UserRoleService(EnseignantRep userRepository) {
