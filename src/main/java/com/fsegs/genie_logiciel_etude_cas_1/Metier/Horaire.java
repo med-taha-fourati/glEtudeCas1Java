@@ -1,8 +1,8 @@
 package com.fsegs.genie_logiciel_etude_cas_1.Metier;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+//import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+//import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.Embeddables.EmbHoraire;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -17,10 +17,9 @@ import java.util.Set;
 @AllArgsConstructor
 @EqualsAndHashCode(exclude = {"seances"})
 @Entity
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Horaire {
     @EmbeddedId
-    private EmbHoraire id;
+    private EmbHoraire horaireId;
 
     @OneToMany(mappedBy = "horaire", fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"horaire", "enseignants", "matieres"})

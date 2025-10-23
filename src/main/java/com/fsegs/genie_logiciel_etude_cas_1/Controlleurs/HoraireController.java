@@ -18,8 +18,8 @@ public class HoraireController {
     public ResponseEntity<?> addHoraire(@RequestBody HoraireDTO horaireDTO) {
         try {
             Horaire horaire = new Horaire();
-            horaire.setHDebut(horaireDTO.hDebut);
-            horaire.setHFin(horaireDTO.hFin);
+            horaire.getHoraireId().setHDebut(horaireDTO.hDebut);
+            horaire.getHoraireId().setHFin(horaireDTO.hFin);
 
             horaireRep.save(horaire);
 
@@ -33,8 +33,8 @@ public class HoraireController {
     public ResponseEntity<?> editHoraire(@RequestParam int id, @RequestBody HoraireDTO horaireDTO) {
         try {
             Horaire horaire = horaireRep.findById(id).orElseThrow(RuntimeException::new);
-            horaire.setHDebut(horaireDTO.hDebut);
-            horaire.setHFin(horaireDTO.hFin);
+            horaire.getHoraireId().setHDebut(horaireDTO.hDebut);
+            horaire.getHoraireId().setHFin(horaireDTO.hFin);
 
             horaireRep.save(horaire);
 
