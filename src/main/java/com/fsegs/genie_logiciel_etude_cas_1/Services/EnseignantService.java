@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class EnseignantService {
     private final EnseignantRep enseignantRep;
-    private Enseignant ens;
     public EnseignantService(EnseignantRep enseignantRep) {
         this.enseignantRep = enseignantRep;
     }
