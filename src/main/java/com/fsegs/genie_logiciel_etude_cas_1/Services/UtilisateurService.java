@@ -1,7 +1,6 @@
 package com.fsegs.genie_logiciel_etude_cas_1.Services;
 
 import com.fsegs.genie_logiciel_etude_cas_1.Exceptions.Utilisateur.UtilisateurPasTrouveeException;
-import com.fsegs.genie_logiciel_etude_cas_1.Metier.Enseignant;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.Utilisateur;
 import com.fsegs.genie_logiciel_etude_cas_1.Repertoires.EnseignantRep;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,10 +9,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserRoleService implements UserDetailsService {
+public class UtilisateurService implements UserDetailsService {
     private EnseignantRep userRepository;
 
-    public UserRoleService(EnseignantRep userRepository) {
+    public UtilisateurService(EnseignantRep userRepository) {
         this.userRepository = userRepository;
     }
 

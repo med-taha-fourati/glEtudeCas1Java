@@ -3,17 +3,19 @@ package com.fsegs.genie_logiciel_etude_cas_1.Controlleurs;
 import com.fsegs.genie_logiciel_etude_cas_1.Exceptions.Grade.GradePasTrouveeException;
 import com.fsegs.genie_logiciel_etude_cas_1.Exceptions.Utilisateur.UtilisateurPasTrouveeException;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.DTO.EnseignantDTO;
+import com.fsegs.genie_logiciel_etude_cas_1.Metier.DTO.TokenDTO;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.DTO.UtilisateurDTO;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.Enseignant;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.Enumerations.EtatSurveillant;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.Grade;
 import com.fsegs.genie_logiciel_etude_cas_1.Middleware.JWTUtil;
+import com.fsegs.genie_logiciel_etude_cas_1.Middleware.JwtResponse;
 import com.fsegs.genie_logiciel_etude_cas_1.Repertoires.EnseignantRep;
 import com.fsegs.genie_logiciel_etude_cas_1.Repertoires.GradeRep;
 import com.fsegs.genie_logiciel_etude_cas_1.Services.EnseignantService;
-import com.fsegs.genie_logiciel_etude_cas_1.Services.UserRoleService;
+import com.fsegs.genie_logiciel_etude_cas_1.Services.UtilisateurService;
+import io.jsonwebtoken.JwtException;
 import jakarta.validation.Valid;
-import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,7 +25,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 @Slf4j
 @RestController
@@ -38,10 +39,10 @@ public class EnseignantControlleur {
     private JWTUtil jwtUtil;
 
     private final EnseignantService enseignantService;
-    private final UserRoleService userRoleService;
-    public EnseignantControlleur(UserRoleService userRoleService, EnseignantService enseignantService) {
+    private final UtilisateurService utilisateurService;
+    public EnseignantControlleur(UtilisateurService utilisateurService, EnseignantService enseignantService) {
         this.enseignantService = enseignantService;
-        this.userRoleService = userRoleService;
+        this.utilisateurService = utilisateurService;
     }
 
     @GetMapping("/fetch")
@@ -57,29 +58,52 @@ public class EnseignantControlleur {
         }
     }
 
+    @PostMapping("/profile")
+    public ResponseEntity<Enseignant> displayProfileFromToken(@RequestBody @Valid TokenDTO tokenDTO) {
+        try {
+            log.debug("Token: {}", tokenDTO.token);
+
+            if (jwtUtil.isTokenExpired(tokenDTO.token)) {
+                throw new JwtException("token expired");
+            }
+
+            String username = jwtUtil.extractUsername(tokenDTO.token);
+//            if (jwtUtil.validateToken(token, username)) {
+//                throw new JwtException("unauthorized token");
+//            }
+            Enseignant trouve = enseignantService.fetchEnseignantFromUsername(username);
+
+            return new  ResponseEntity<>(trouve, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody UtilisateurDTO details) {
         try {
             log.debug("username: {} password: {}", details.username, details.password);
             // to be deleted
-            Enseignant trouve = enseignantRep
-                    .findByUsernameAndPassword(details.username, details.password)
-                    .orElseThrow(() -> new UtilisateurPasTrouveeException("pas trouvee"));
+            Enseignant trouve = enseignantService.fetchEnseignantFromUsernameAndPassword(details.username, details.password);
 
             // verify with jwt
-            UserDetails trouveeDetails = userRoleService.loadUserByUsername(details.username);
+            UserDetails trouveeDetails = utilisateurService.loadUserByUsername(details.username);
             if (trouveeDetails == null) {
                 throw new UtilisateurPasTrouveeException("pas trouvee");
             }
 
             // generateToken
             String token = jwtUtil.generateToken(trouveeDetails.getUsername());
+            JwtResponse jwtResponse = new JwtResponse(token, jwtUtil.getIssuedAt(token));
 
-            return new ResponseEntity<>(token, HttpStatus.OK);
+            return new ResponseEntity<>(jwtResponse, HttpStatus.OK);
         } catch (Exception exception) {
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.UNAUTHORIZED);
         }
     }
+
+    //@PostMapping("/retreiveFromJwt")
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody EnseignantDTO details) {

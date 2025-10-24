@@ -1,6 +1,6 @@
 package com.fsegs.genie_logiciel_etude_cas_1.Middleware;
 
-import com.fsegs.genie_logiciel_etude_cas_1.Services.UserRoleService;
+import com.fsegs.genie_logiciel_etude_cas_1.Services.UtilisateurService;
 import java.io.IOException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -14,13 +14,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @Component
-public abstract class JwtRequestFilter extends OncePerRequestFilter {
+public class JwtRequestFilter extends OncePerRequestFilter {
     private final JWTUtil jwtUtil;
-    private final UserRoleService userRoleService;
+    private final UtilisateurService utilisateurService;
 
-    public JwtRequestFilter(JWTUtil jwtUtil, UserRoleService userRoleService) {
+    public JwtRequestFilter(JWTUtil jwtUtil, UtilisateurService utilisateurService) {
         this.jwtUtil = jwtUtil;
-        this.userRoleService = userRoleService;
+        this.utilisateurService = utilisateurService;
     }
 
     @Override
@@ -37,7 +37,7 @@ public abstract class JwtRequestFilter extends OncePerRequestFilter {
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userRoleService.loadUserByUsername(username);
+            UserDetails userDetails = utilisateurService.loadUserByUsername(username);
 
             if (jwtUtil.validateToken(jwt, userDetails.getUsername())) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
