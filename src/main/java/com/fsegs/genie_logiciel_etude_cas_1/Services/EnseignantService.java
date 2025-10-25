@@ -3,6 +3,7 @@ package com.fsegs.genie_logiciel_etude_cas_1.Services;
 import com.fsegs.genie_logiciel_etude_cas_1.Exceptions.Utilisateur.UtilisateurPasTrouveeException;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.Enseignant;
 import com.fsegs.genie_logiciel_etude_cas_1.Repertoires.EnseignantRep;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;

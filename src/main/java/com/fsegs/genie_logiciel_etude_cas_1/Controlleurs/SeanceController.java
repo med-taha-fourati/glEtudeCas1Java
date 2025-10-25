@@ -1,124 +1,85 @@
 package com.fsegs.genie_logiciel_etude_cas_1.Controlleurs;
 
-import com.fsegs.genie_logiciel_etude_cas_1.Exceptions.Grade.GradePasTrouveeException;
 import com.fsegs.genie_logiciel_etude_cas_1.Exceptions.Seance.SeancePasTrouveeException;
-import com.fsegs.genie_logiciel_etude_cas_1.Metier.DTO.GradeDTO;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.DTO.SeanceDTO;
-import com.fsegs.genie_logiciel_etude_cas_1.Metier.Embeddables.EmbHoraire;
-import com.fsegs.genie_logiciel_etude_cas_1.Metier.Grade;
-import com.fsegs.genie_logiciel_etude_cas_1.Metier.Horaire;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.Seance;
-import com.fsegs.genie_logiciel_etude_cas_1.Repertoires.HoraireRep;
-import com.fsegs.genie_logiciel_etude_cas_1.Repertoires.SeanceRep;
 import com.fsegs.genie_logiciel_etude_cas_1.Services.SeanceService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Response;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
 @RestController
 @RequestMapping("/seance")
 public class SeanceController {
-    @Autowired
-    private SeanceRep seanceRep;
-    @Autowired
-    private HoraireRep horaireRep;
-
     private final SeanceService seanceService;
+
     public SeanceController(SeanceService seanceService) {
         this.seanceService = seanceService;
     }
 
-
     @GetMapping("/fetchAll")
-    public ResponseEntity<List<Seance>> fetchAll() {
+    public ResponseEntity<?> fetchAll() {
         try {
-            ArrayList<Seance> trv = (ArrayList<Seance>) seanceRep.findAll();
-
-            return new  ResponseEntity<>(trv, HttpStatus.OK);
+            List<Seance> seances = seanceService.getAllSeances();
+            return new ResponseEntity<>(seances, HttpStatus.OK);
         } catch (Exception e) {
-            return new  ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            log.error("Error fetching all seances", e);
+            return new ResponseEntity<>("Erreur lors de la recuperation des seances",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @GetMapping("/fetch")
-    public ResponseEntity<Seance> fetch(@RequestParam("id") int id) {
+    public ResponseEntity<?> fetch(@RequestParam("id") int id) {
         try {
-            Seance seance = seanceRep.findById(id).orElseThrow(()->new SeancePasTrouveeException("seacne pas trouvee"));
+            Seance seance = seanceService.getSeanceById(id)
+                    .orElseThrow(() -> new SeancePasTrouveeException("Seance pas trouvee avec id: " + id));
 
-            return new  ResponseEntity<>(seance, HttpStatus.OK);
+            return new ResponseEntity<>(seance, HttpStatus.OK);
         } catch (Exception e) {
-            return new  ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            log.error("Error fetching seance with id: {}", id, e);
+            return new ResponseEntity<>("Erreur lors de la recuperation de la seance",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     @PostMapping("/add")
     public ResponseEntity<?> addSeance(@RequestBody SeanceDTO seanceDTO) {
         try {
-            EmbHoraire embHoraire = new EmbHoraire();
-            embHoraire.setHDebut(seanceDTO.horaireHDebut);
-            embHoraire.setHFin(seanceDTO.horaireHFin);
-            Horaire horaireTrv = horaireRep.findByEmbHoraire(embHoraire).orElseThrow(()->new SeancePasTrouveeException("seance pas trouvee"));
-
-            Seance seance = new Seance();
-            seance.setHoraire(horaireTrv);
-            seance.setSeanceDate(LocalDate.of(seanceDTO.annee, seanceDTO.mois, seanceDTO.jour));
-
-            //NOTE: calculation of the N thing for the enseignants
-            seance.setN(seanceService.calculerN(seance));
-
-            seanceRep.save(seance);
-
-            return new ResponseEntity<>(seance, HttpStatus.OK);
-
+            Seance savedSeance = seanceService.createSeance(seanceDTO);
+            return new ResponseEntity<>(savedSeance, HttpStatus.CREATED);
         } catch (Exception e) {
-            log.error(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            log.error("Error adding seance", e);
+            return new ResponseEntity<>("Erreur lors de l'ajout de la seance",
+                    HttpStatus.BAD_REQUEST);
         }
     }
 
     @PutMapping("/edit")
-    public ResponseEntity<?> editSeance(@RequestParam int id, @RequestBody SeanceDTO seance) {
+    public ResponseEntity<?> editSeance(@RequestParam int id, @RequestBody SeanceDTO seanceDTO) {
         try {
-            EmbHoraire embHoraire = new EmbHoraire();
-            embHoraire.setHDebut(seance.horaireHDebut);
-            embHoraire.setHFin(seance.horaireHFin);
-            Seance touvee = seanceRep.findById(id)
-                    .orElseThrow(() -> new GradePasTrouveeException("Grade pas trouve"));
-            Horaire horaireTrv = horaireRep.findByEmbHoraire(embHoraire).orElseThrow(()->new SeancePasTrouveeException("seance pas trouvee"));
-
-            touvee.setHoraire(horaireTrv);
-            touvee.setSeanceDate(LocalDate.of(seance.annee, seance.mois, seance.jour));
-
-            seanceRep.save(touvee);
-
-            return new  ResponseEntity<>(seance, HttpStatus.OK);
-
+            Seance updatedSeance = seanceService.updateSeance(id, seanceDTO);
+            return new ResponseEntity<>(updatedSeance, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            log.error("Error editing seance with id: {}", id, e);
+            return new ResponseEntity<>("Erreur lors de la modification de la seance",
+                    HttpStatus.BAD_REQUEST);
         }
     }
 
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteSeance(@RequestParam int id) {
         try {
-            Seance touvee = seanceRep.findById(id)
-                    .orElseThrow(() -> new GradePasTrouveeException("Grade pas trouve"));
-
-            seanceRep.delete(touvee);
-
-            return new ResponseEntity<>(HttpStatus.OK);
-
+            seanceService.deleteSeance(id);
+            return new ResponseEntity<>("Seance supprimee avec succes", HttpStatus.OK);
         } catch (Exception e) {
-            return new  ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            log.error("Error deleting seance with id: {}", id, e);
+            return new ResponseEntity<>("Erreur lors de la suppression de la seance",
+                    HttpStatus.BAD_REQUEST);
         }
     }
-
 }

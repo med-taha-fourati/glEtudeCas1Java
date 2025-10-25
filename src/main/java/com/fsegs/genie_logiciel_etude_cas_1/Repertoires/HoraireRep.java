@@ -6,6 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface HoraireRep extends JpaRepository<Horaire, Integer> {
-    Optional<Horaire> findByEmbHoraire(EmbHoraire horaireId);
+public interface HoraireRep extends JpaRepository<Horaire, EmbHoraire> {
 }
