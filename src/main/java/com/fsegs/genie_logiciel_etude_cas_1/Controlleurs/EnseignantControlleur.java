@@ -3,13 +3,13 @@ package com.fsegs.genie_logiciel_etude_cas_1.Controlleurs;
 import com.fsegs.genie_logiciel_etude_cas_1.Exceptions.Grade.GradePasTrouveeException;
 import com.fsegs.genie_logiciel_etude_cas_1.Exceptions.Utilisateur.UtilisateurPasTrouveeException;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.DTO.EnseignantDTO;
-import com.fsegs.genie_logiciel_etude_cas_1.Metier.DTO.TokenDTO;
+import com.fsegs.genie_logiciel_etude_cas_1.Middleware.DTO.TokenDTO;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.DTO.UtilisateurDTO;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.Enseignant;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.Enumerations.EtatSurveillant;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.Grade;
 import com.fsegs.genie_logiciel_etude_cas_1.Middleware.JWTUtil;
-import com.fsegs.genie_logiciel_etude_cas_1.Middleware.JwtResponse;
+import com.fsegs.genie_logiciel_etude_cas_1.Middleware.DTO.JwtResponse;
 import com.fsegs.genie_logiciel_etude_cas_1.Repertoires.EnseignantRep;
 import com.fsegs.genie_logiciel_etude_cas_1.Repertoires.GradeRep;
 import com.fsegs.genie_logiciel_etude_cas_1.Services.EnseignantService;
@@ -48,7 +48,7 @@ public class EnseignantControlleur {
     @GetMapping("/fetch")
     public ResponseEntity<List<Enseignant>> fetchEnseignant() {
         try {
-            ArrayList<Enseignant> enseignants = (ArrayList<Enseignant>) enseignantRep.findAll();
+            ArrayList<Enseignant> enseignants = (ArrayList<Enseignant>) enseignantService.fetchAllEnseignants();
 
             log.info("endpoint /fetch yielded: {} ", enseignants.size());
 

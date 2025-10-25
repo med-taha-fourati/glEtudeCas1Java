@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class EnseignantService {
     private final EnseignantRep enseignantRep;
@@ -26,5 +28,9 @@ public class EnseignantService {
         return enseignantRep
                 .findByUsernameAndPassword(username, password)
                 .orElseThrow(() -> new UtilisateurPasTrouveeException("pas trouvee"));
+    }
+
+    public List<Enseignant> fetchAllEnseignants() {
+        return enseignantRep.findAll();
     }
 }

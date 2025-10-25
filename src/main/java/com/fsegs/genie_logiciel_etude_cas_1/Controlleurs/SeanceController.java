@@ -4,12 +4,14 @@ import com.fsegs.genie_logiciel_etude_cas_1.Exceptions.Grade.GradePasTrouveeExce
 import com.fsegs.genie_logiciel_etude_cas_1.Exceptions.Seance.SeancePasTrouveeException;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.DTO.GradeDTO;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.DTO.SeanceDTO;
+import com.fsegs.genie_logiciel_etude_cas_1.Metier.Embeddables.EmbHoraire;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.Grade;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.Horaire;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.Seance;
 import com.fsegs.genie_logiciel_etude_cas_1.Repertoires.HoraireRep;
 import com.fsegs.genie_logiciel_etude_cas_1.Repertoires.SeanceRep;
 import com.fsegs.genie_logiciel_etude_cas_1.Services.SeanceService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
@@ -17,9 +19,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/seance")
 public class SeanceController {
@@ -58,11 +62,14 @@ public class SeanceController {
     @PostMapping("/add")
     public ResponseEntity<?> addSeance(@RequestBody SeanceDTO seanceDTO) {
         try {
-            Horaire horaireTrv = horaireRep.findById(seanceDTO.horaireId).orElseThrow(()->new SeancePasTrouveeException("seance pas trouvee"));
+            EmbHoraire embHoraire = new EmbHoraire();
+            embHoraire.setHDebut(seanceDTO.horaireHDebut);
+            embHoraire.setHFin(seanceDTO.horaireHFin);
+            Horaire horaireTrv = horaireRep.findByEmbHoraire(embHoraire).orElseThrow(()->new SeancePasTrouveeException("seance pas trouvee"));
 
             Seance seance = new Seance();
             seance.setHoraire(horaireTrv);
-            seance.setSeanceDate(seanceDTO.date);
+            seance.setSeanceDate(LocalDate.of(seanceDTO.annee, seanceDTO.mois, seanceDTO.jour));
 
             //NOTE: calculation of the N thing for the enseignants
             seance.setN(seanceService.calculerN(seance));
@@ -72,6 +79,7 @@ public class SeanceController {
             return new ResponseEntity<>(seance, HttpStatus.OK);
 
         } catch (Exception e) {
+            log.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
@@ -79,12 +87,15 @@ public class SeanceController {
     @PutMapping("/edit")
     public ResponseEntity<?> editSeance(@RequestParam int id, @RequestBody SeanceDTO seance) {
         try {
+            EmbHoraire embHoraire = new EmbHoraire();
+            embHoraire.setHDebut(seance.horaireHDebut);
+            embHoraire.setHFin(seance.horaireHFin);
             Seance touvee = seanceRep.findById(id)
                     .orElseThrow(() -> new GradePasTrouveeException("Grade pas trouve"));
-            Horaire horaireTrv = horaireRep.findById(seance.horaireId).orElseThrow(()->new SeancePasTrouveeException("seance pas trouvee"));
+            Horaire horaireTrv = horaireRep.findByEmbHoraire(embHoraire).orElseThrow(()->new SeancePasTrouveeException("seance pas trouvee"));
 
             touvee.setHoraire(horaireTrv);
-            touvee.setSeanceDate(seance.date);
+            touvee.setSeanceDate(LocalDate.of(seance.annee, seance.mois, seance.jour));
 
             seanceRep.save(touvee);
 

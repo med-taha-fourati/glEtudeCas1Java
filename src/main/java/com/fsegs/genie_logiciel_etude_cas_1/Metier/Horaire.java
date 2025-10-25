@@ -19,9 +19,9 @@ import java.util.Set;
 @Entity
 public class Horaire {
     @EmbeddedId
-    private EmbHoraire horaireId;
+    private EmbHoraire embHoraire;
 
     @OneToMany(mappedBy = "horaire", fetch = FetchType.LAZY)
-    @JsonIgnoreProperties({"horaire", "enseignants", "matieres"})
+    @JsonIgnoreProperties({"seances", "horaire", "enseignants", "matieres"})
     private Set<Seance> seances;
 }
