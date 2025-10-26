@@ -3,6 +3,8 @@ package com.fsegs.genie_logiciel_etude_cas_1.Metier.DTO;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.Enumerations.EtatSurveillant;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.Matiere;
 import jakarta.validation.constraints.Min;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.validator.constraints.NotBlank;
 
 import java.util.Set;
@@ -17,7 +19,7 @@ public class EnseignantDTO {
         public int tel;
         public String prenom;
         public int gradeId;
-        public Set<Matiere> matiere;
+        public Set<Integer> matiere;
         public EtatSurveillant etatSurveillant;
 
 }

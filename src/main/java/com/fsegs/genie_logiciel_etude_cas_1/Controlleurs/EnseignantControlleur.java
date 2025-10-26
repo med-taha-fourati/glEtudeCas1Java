@@ -3,6 +3,7 @@ package com.fsegs.genie_logiciel_etude_cas_1.Controlleurs;
 import com.fsegs.genie_logiciel_etude_cas_1.Exceptions.Grade.GradePasTrouveeException;
 import com.fsegs.genie_logiciel_etude_cas_1.Exceptions.Utilisateur.UtilisateurPasTrouveeException;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.DTO.EnseignantDTO;
+import com.fsegs.genie_logiciel_etude_cas_1.Metier.Matiere;
 import com.fsegs.genie_logiciel_etude_cas_1.Middleware.DTO.TokenDTO;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.DTO.UtilisateurDTO;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.Enseignant;
@@ -12,11 +13,14 @@ import com.fsegs.genie_logiciel_etude_cas_1.Middleware.JWTUtil;
 import com.fsegs.genie_logiciel_etude_cas_1.Middleware.DTO.JwtResponse;
 import com.fsegs.genie_logiciel_etude_cas_1.Repertoires.EnseignantRep;
 import com.fsegs.genie_logiciel_etude_cas_1.Repertoires.GradeRep;
+import com.fsegs.genie_logiciel_etude_cas_1.Repertoires.MatiereRep;
 import com.fsegs.genie_logiciel_etude_cas_1.Services.EnseignantService;
 import com.fsegs.genie_logiciel_etude_cas_1.Services.UtilisateurService;
 import io.jsonwebtoken.JwtException;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @RestController
@@ -39,6 +44,9 @@ public class EnseignantControlleur {
 
     private final EnseignantService enseignantService;
     private final UtilisateurService utilisateurService;
+    @Autowired
+    private MatiereRep matiereRep;
+
     public EnseignantControlleur(UtilisateurService utilisateurService, EnseignantService enseignantService) {
         this.enseignantService = enseignantService;
         this.utilisateurService = utilisateurService;
@@ -137,19 +145,22 @@ public class EnseignantControlleur {
     }
 
     @PutMapping("/edit")
+    @Cascade(value = CascadeType.ALL) // ill change dtos later
     public ResponseEntity<?> edit(@RequestParam int id, @RequestBody EnseignantDTO details) {
         try {
             Enseignant tourve = enseignantRep.findById(id).orElseThrow(
                     () -> new UtilisateurPasTrouveeException("pas trouvee")
             );
 
-            Grade trove = gradeRep.findById(tourve.getGrade().getId()).orElseThrow(()->new GradePasTrouveeException("grade pas trouvee"));
+            Grade trove = gradeRep.findById(details.gradeId).orElseThrow(()->new GradePasTrouveeException("grade pas trouvee"));
+            Set<Matiere> trv = matiereRep.findAllByIdIn(details.matiere);
             tourve.setUsername(details.username);
             tourve.setPassword(details.password);
             tourve.setNom(details.nom);
             tourve.setPrenom(details.prenom);
             tourve.setGrade(trove);
             tourve.setTel(details.tel);
+            tourve.setMatieres(trv);
             tourve.setEtatSurveillant(details.etatSurveillant);
 
             enseignantRep.save(tourve);
