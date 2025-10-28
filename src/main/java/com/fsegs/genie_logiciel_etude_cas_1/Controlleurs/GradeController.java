@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -20,6 +21,7 @@ public class GradeController {
     @Autowired
     GradeRep gradeRep;
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'ENSEIGNANT')")
     @GetMapping("/")
     public ResponseEntity<List<Grade>> fetchGrade() {
         try {
@@ -31,6 +33,7 @@ public class GradeController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'ENSEIGNANT')")
     @GetMapping("/fetch")
     public ResponseEntity<Grade> fetchGradeId(@Valid @RequestParam Integer gradeId) {
         try {
@@ -41,6 +44,7 @@ public class GradeController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/add")
     public Grade addGrade(@RequestBody GradeDTO grade) {
         try {
@@ -56,6 +60,7 @@ public class GradeController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/edit")
     public Grade editGrade(@RequestParam int id, @RequestBody GradeDTO grade) {
         try {
@@ -74,6 +79,7 @@ public class GradeController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete")
     public boolean deleteGrade(@RequestParam int id) {
         try {

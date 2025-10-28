@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class HoraireController {
     @Autowired
     private HoraireService horaireService;
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'ENSEIGNANT')")
     @GetMapping("/")
     public ResponseEntity<?> listeHoraire() {
         try {
@@ -30,6 +32,7 @@ public class HoraireController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'ENSEIGNANT')")
     @GetMapping("/get")
     public ResponseEntity<?> getHoraire(
             @RequestParam int hDebut,
@@ -44,11 +47,15 @@ public class HoraireController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/add")
     public ResponseEntity<?> addHoraire(@RequestBody HoraireDTO horaireDTO) {
         try {
             Horaire horaire = horaireService.createHoraire(horaireDTO);
             return new ResponseEntity<>(horaire, HttpStatus.CREATED);
+        } catch (IllegalArgumentException ex) {
+            log.error("Invalid horaire", ex);
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception ex) {
             log.error("Error creating horaire", ex);
             return new ResponseEntity<>("Erreur dans l'enregistrement de horaire",
@@ -56,6 +63,7 @@ public class HoraireController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/edit")
     public ResponseEntity<?> editHoraire(
             @RequestParam int oldHDebut,
@@ -64,6 +72,9 @@ public class HoraireController {
         try {
             Horaire horaire = horaireService.updateHoraire(oldHDebut, oldHFin, horaireDTO);
             return new ResponseEntity<>(horaire, HttpStatus.OK);
+        } catch (IllegalArgumentException ex) {
+            log.error("Invalid horaire", ex);
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (RuntimeException ex) {
             log.error("Error updating horaire", ex);
             return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
@@ -73,6 +84,7 @@ public class HoraireController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteHoraire(
             @RequestParam int hDebut,

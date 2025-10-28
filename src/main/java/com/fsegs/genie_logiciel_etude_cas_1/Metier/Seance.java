@@ -31,6 +31,8 @@ public class Seance {
     @JsonIgnore
     private int N;
 
+    private boolean verrouillee = false;
+
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "seances")
     @JsonIgnoreProperties({"seances", "matieres", "grade"})
     @JsonIgnore
@@ -49,5 +51,17 @@ public class Seance {
         return (int) (enseignants.stream()
                 .map((k)->k.getGrade().getChargeSurveillance())
                 .reduce(0, Integer::sum) * 1.5) - (matieres.size());
+    }
+
+    public int calculerSurveillantsRequis() {
+        if (matieres == null || matieres.isEmpty()) return 0;
+        int sommePaquets = matieres.stream()
+                .mapToInt(Matiere::getNbPaquets)
+                .sum();
+        return (int) Math.ceil(sommePaquets * 1.5);
+    }
+
+    public boolean estSaturee() {
+        return enseignants.size() >= calculerSurveillantsRequis();
     }
 }

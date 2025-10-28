@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.Enumerations.EtatSurveillant;
+import com.fsegs.genie_logiciel_etude_cas_1.Metier.Enumerations.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Cascade;
@@ -43,6 +44,8 @@ public class Enseignant extends Utilisateur {
     @JsonIgnore
     private int M = calculerM();
 
+    private int anciennete = 0;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"enseignants", "matieres", "horaire"})
     private Set<Seance> seances = new HashSet<>();
@@ -52,5 +55,16 @@ public class Enseignant extends Utilisateur {
         return (int) (matieres.stream()
                 .mapToInt(Matiere::getNbPaquets)
                 .reduce(0, Integer::sum) * 1.5);
+    }
+
+    public int calculerChargeSurveillance() {
+        if (grade == null) return 0;
+        int chargeEnseignement = grade.getChargeSurveillance();
+        int nbSeancesMatieres = seances.size();
+        return (int) ((chargeEnseignement * 1.5) - nbSeancesMatieres);
+    }
+
+    public Enseignant() {
+        this.setRole(Role.ENSEIGNANT);
     }
 }

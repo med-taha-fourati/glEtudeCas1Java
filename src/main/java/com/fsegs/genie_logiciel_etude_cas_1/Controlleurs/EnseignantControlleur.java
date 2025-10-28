@@ -24,6 +24,7 @@ import org.hibernate.annotations.CascadeType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,6 +53,7 @@ public class EnseignantControlleur {
         this.utilisateurService = utilisateurService;
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'ENSEIGNANT')")
     @GetMapping("/fetch")
     public ResponseEntity<List<Enseignant>> fetchEnseignant() {
         try {
@@ -65,6 +67,7 @@ public class EnseignantControlleur {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'ENSEIGNANT')")
     @PostMapping("/profile")
     public ResponseEntity<Enseignant> displayProfileFromToken(@RequestBody @Valid TokenDTO tokenDTO) {
         try {
@@ -75,9 +78,6 @@ public class EnseignantControlleur {
             }
 
             String username = jwtUtil.extractUsername(tokenDTO.token);
-//            if (jwtUtil.validateToken(token, username)) {
-//                throw new JwtException("unauthorized token");
-//            }
             Enseignant trouve = enseignantService.fetchEnseignantFromUsername(username);
 
             return new  ResponseEntity<>(trouve, HttpStatus.OK);
@@ -91,16 +91,13 @@ public class EnseignantControlleur {
     public ResponseEntity<?> login(@Valid @RequestBody UtilisateurDTO details) {
         try {
             log.debug("username: {} password: {}", details.username, details.password);
-            // to be deleted
             Enseignant trouve = enseignantService.fetchEnseignantFromUsernameAndPassword(details.username, details.password);
 
-            // verify with jwt
             UserDetails trouveeDetails = utilisateurService.loadUserByUsername(details.username);
             if (trouveeDetails == null) {
                 throw new UtilisateurPasTrouveeException("pas trouvee");
             }
 
-            // generateToken
             String token = jwtUtil.generateToken(trouveeDetails.getUsername());
             JwtResponse jwtResponse = new JwtResponse(token, jwtUtil.getIssuedAt(token));
 
@@ -110,17 +107,12 @@ public class EnseignantControlleur {
         }
     }
 
-    //@PostMapping("/retreiveFromJwt")
-
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody EnseignantDTO details) {
         try {
-            // Enseignant uh .. new something im tired
-
             Grade er = gradeRep.findById(details.gradeId).orElseThrow(()->new GradePasTrouveeException("grade pas trouvee"));
 
             Enseignant nouvel = new Enseignant();
-            //logger.info(String.valueOf(details.tel));
             nouvel.setUsername(details.username);
             nouvel.setPassword(details.password);
             nouvel.setNom(details.nom);
@@ -128,9 +120,8 @@ public class EnseignantControlleur {
 
             nouvel.setGrade(er);
             nouvel.setTel(details.tel);
-            nouvel.setEtatSurveillant(EtatSurveillant.PAS_SURVEILLANT); // par default
+            nouvel.setEtatSurveillant(EtatSurveillant.PAS_SURVEILLANT);
 
-            //NOTE: for further testing
             nouvel.setM(enseignantService.calculerM(nouvel));
 
             enseignantRep.save(nouvel);
@@ -144,8 +135,9 @@ public class EnseignantControlleur {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/edit")
-    @Cascade(value = CascadeType.ALL) // ill change dtos later
+    @Cascade(value = CascadeType.ALL)
     public ResponseEntity<?> edit(@RequestParam int id, @RequestBody EnseignantDTO details) {
         try {
             Enseignant tourve = enseignantRep.findById(id).orElseThrow(
@@ -171,5 +163,30 @@ public class EnseignantControlleur {
         }
     }
 
-    //TODO: delete method, but only admin can do it
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> delete(@RequestParam int id) {
+        try {
+            Enseignant tourve = enseignantRep.findById(id).orElseThrow(
+                    () -> new UtilisateurPasTrouveeException("pas trouvee")
+            );
+            enseignantRep.delete(tourve);
+            return new ResponseEntity<>("Enseignant supprime avec succes", HttpStatus.OK);
+        } catch (Exception exception) {
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/recalculer-charges")
+    public ResponseEntity<?> recalculerCharges() {
+        try {
+            enseignantService.recalculerCharges();
+            return new ResponseEntity<>("Charges recalculees avec succes", HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("Error recalculating charges", e);
+            return new ResponseEntity<>("Erreur lors du recalcul des charges",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

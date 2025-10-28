@@ -34,4 +34,13 @@ public class EnseignantService {
     public List<Enseignant> fetchAllEnseignants() {
         return enseignantRep.findAll();
     }
+
+    @Transactional
+    public void recalculerCharges() {
+        List<Enseignant> enseignants = enseignantRep.findAll();
+        enseignants.forEach(e -> {
+            e.setM(e.calculerM());
+        });
+        enseignantRep.saveAll(enseignants);
+    }
 }

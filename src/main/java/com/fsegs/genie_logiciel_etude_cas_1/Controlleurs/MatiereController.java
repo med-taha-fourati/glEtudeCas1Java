@@ -8,6 +8,7 @@ import com.fsegs.genie_logiciel_etude_cas_1.Repertoires.SeanceRep;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Array;
@@ -22,6 +23,7 @@ public class MatiereController {
     @Autowired
     private SeanceRep seanceRep;
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'ENSEIGNANT')")
     @GetMapping("/fetchAll")
     public ResponseEntity<List<Matiere>>  fetchAll() {
         try {
@@ -32,6 +34,7 @@ public class MatiereController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/add")
     public ResponseEntity<?> addMatiere(@RequestBody MatiereDTO matiere) {
         try {
@@ -51,6 +54,7 @@ public class MatiereController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/edit")
     public ResponseEntity<?> editMatiere(@RequestParam int id, @RequestBody MatiereDTO matiere) {
         try {
@@ -70,6 +74,7 @@ public class MatiereController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteMatiere(@RequestParam int id) {
         try {
