@@ -10,6 +10,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequestMapping("/matiere")
 public class MatiereController {
@@ -17,6 +21,16 @@ public class MatiereController {
     private MatiereRep matiereRep;
     @Autowired
     private SeanceRep seanceRep;
+
+    @GetMapping("/fetchAll")
+    public ResponseEntity<List<Matiere>>  fetchAll() {
+        try {
+            ArrayList<Matiere> matieres = (ArrayList<Matiere>)matiereRep.findAll();
+            return  new ResponseEntity<>(matieres, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     @PostMapping("/add")
     public ResponseEntity<?> addMatiere(@RequestBody MatiereDTO matiere) {
