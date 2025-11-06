@@ -144,4 +144,17 @@ public class SeanceController {
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/terminer-examen")
+    public ResponseEntity<?> terminerExamenSeance(@RequestParam int seanceId) {
+    	try {
+    		seanceService.terminerSeance(seanceId);
+    		return new ResponseEntity<>("Seance terminee avec succee", HttpStatus.OK);
+    	} catch (Exception e) {
+    		log.error("Error during modification", e);
+    		return new ResponseEntity<>("Erreur lors du modification du status du seance", HttpStatus.INTERNAL_SERVER_ERROR);
+    	}
+    	
+    }
 }

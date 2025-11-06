@@ -12,6 +12,7 @@ import com.fsegs.genie_logiciel_etude_cas_1.Repertoires.SeanceRep;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
@@ -174,4 +175,22 @@ public class SeanceService {
         seanceRep.saveAll(seances);
         enseignantRep.saveAll(enseignants);
     }
+    
+    @Transactional
+    public boolean terminerSeance(int seanceId) {
+    	Seance seance = seanceRep.findById(seanceId)
+              .orElseThrow(() -> new SeancePasTrouveeException("Seance pas trouvee"));
+    	
+    	if (!seance.getSeanceDate().isBefore(LocalDate.now())) {
+    		return false;
+    	}
+    	seance.setPasseeExamen(true);
+    	if (seanceRep.save(seance) == null) {
+    		return false;
+    	}
+    	return true;
+    	
+    	
+    }
+    
 }

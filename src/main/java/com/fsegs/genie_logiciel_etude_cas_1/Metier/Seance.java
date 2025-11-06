@@ -8,7 +8,9 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -19,6 +21,8 @@ import java.util.Set;
 @AllArgsConstructor
 @EqualsAndHashCode(exclude = {"enseignants", "matieres", "horaire"})
 @Entity
+@Getter
+@Setter
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Seance {
     @Id
@@ -32,6 +36,8 @@ public class Seance {
     private int N;
 
     private boolean verrouillee = false;
+    
+    private boolean passeeExamen = false;
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "seances")
     @JsonIgnoreProperties({"seances", "matieres", "grade"})
