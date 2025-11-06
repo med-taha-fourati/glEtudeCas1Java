@@ -134,7 +134,7 @@ public class SeanceController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/affecter-automatiquement")
-    public ResponseEntity<?> affecterAutomatiquement() {
+    public ResponseEntity<?> affecter() {
         try {
             seanceService.affecterAutomatiquement();
             return new ResponseEntity<>("Affectations automatiques effectuees avec succes", HttpStatus.OK);

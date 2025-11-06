@@ -63,8 +63,4 @@ public class Enseignant extends Utilisateur {
         int nbSeancesMatieres = seances.size();
         return (int) ((chargeEnseignement * 1.5) - nbSeancesMatieres);
     }
-
-    public Enseignant() {
-        this.setRole(Role.ENSEIGNANT);
-    }
 }
