@@ -53,7 +53,8 @@ public class Seance {
     private Horaire horaire;
 
     public int calculerN() {
-        assert matieres != null;
+        //assert matieres != null; remove for prod
+        if (matieres == null || matieres.isEmpty()) return 0;
         return (int) (enseignants.stream()
                 .map((k)->k.getGrade().getChargeSurveillance())
                 .reduce(0, Integer::sum) * 1.5) - (matieres.size());
