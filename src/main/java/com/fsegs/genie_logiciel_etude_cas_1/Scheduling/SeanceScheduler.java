@@ -11,7 +11,7 @@ import com.fsegs.genie_logiciel_etude_cas_1.Services.SeanceService;
 @Service
 //TODO: develop this even further
 public class SeanceScheduler {
-	private SeanceService seanceService;
+	private final SeanceService seanceService;
 	
 	public SeanceScheduler(SeanceService s) {
 		this.seanceService = s;
@@ -20,6 +20,11 @@ public class SeanceScheduler {
 	@Scheduled(cron = "*/5 * * * * *")
 	public void terminerSeancesAuto() {
 		List<Seance> seances = seanceService.getAllSeances();
-		seances.stream().forEach((s)->seanceService.terminerSeance(s.getId()));
+		seances.forEach((s)->seanceService.terminerSeance(s.getId()));
+	}
+
+	@Scheduled(cron = "0 0 0 * * *")
+	public void rejeterAutoVoeu() {
+
 	}
 }
