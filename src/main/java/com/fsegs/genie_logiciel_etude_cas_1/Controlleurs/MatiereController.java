@@ -17,6 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/matiere")
+@CrossOrigin("*")
 public class MatiereController {
     @Autowired
     private MatiereRep matiereRep;
@@ -63,6 +64,7 @@ public class MatiereController {
             matierew.setNom(matiere.nom);
             matierew.setNbPaquets(matiere.nbPaquets);
 
+            //TODO: MAKE NULLABLE IN THE FUTURE
             Seance tr = seanceRep.findById(matiere.seanceId).orElseThrow(()->new RuntimeException());
             matierew.setSeance(tr);
 

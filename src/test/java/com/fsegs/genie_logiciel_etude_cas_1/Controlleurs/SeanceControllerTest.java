@@ -1,6 +1,7 @@
 package com.fsegs.genie_logiciel_etude_cas_1.Controlleurs;
 
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.DTO.SeanceDTO;
+import com.fsegs.genie_logiciel_etude_cas_1.Metier.DTO.CalculerNResponse;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.Seance;
 import com.fsegs.genie_logiciel_etude_cas_1.Services.SeanceService;
 import org.junit.jupiter.api.BeforeEach;
@@ -103,5 +104,30 @@ class SeanceControllerTest {
         ResponseEntity<?> response = seanceController.terminerExamenSeance(1);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    void calculerNReturnsCalculerNResponse() {
+        Seance seance = new Seance();
+        when(seanceService.getSeanceById(1)).thenReturn(Optional.of(seance));
+        when(seanceService.calculerN(seance)).thenReturn(42);
+
+        ResponseEntity<?> response = seanceController.calculerN(1);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        CalculerNResponse calculerNResponse = (CalculerNResponse) response.getBody();
+        assertEquals(1, calculerNResponse.getSeanceId());
+        assertEquals(42, calculerNResponse.getN());
+    }
+
+    @Test
+    void calculerNReturnsInternalServerErrorWhenSeanceNotFound() {
+        when(seanceService.getSeanceById(1)).thenReturn(Optional.empty());
+
+        ResponseEntity<?> response = seanceController.calculerN(1);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("Erreur lors du calcul de N pour la seance", response.getBody());
     }
 }

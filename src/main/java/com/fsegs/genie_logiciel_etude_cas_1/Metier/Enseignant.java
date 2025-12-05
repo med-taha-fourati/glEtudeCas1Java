@@ -61,6 +61,6 @@ public class Enseignant extends Utilisateur {
         if (grade == null) return 0;
         int chargeEnseignement = grade.getChargeSurveillance();
         int nbSeancesMatieres = seances.size();
-        return (int) ((chargeEnseignement * 1.5) - nbSeancesMatieres);
+        return Math.max(((int) (chargeEnseignement * 1.5) - nbSeancesMatieres), 0);
     }
 }

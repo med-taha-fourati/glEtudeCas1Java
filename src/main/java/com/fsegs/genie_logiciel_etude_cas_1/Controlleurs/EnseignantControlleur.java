@@ -3,6 +3,7 @@ package com.fsegs.genie_logiciel_etude_cas_1.Controlleurs;
 import com.fsegs.genie_logiciel_etude_cas_1.Exceptions.Grade.GradePasTrouveeException;
 import com.fsegs.genie_logiciel_etude_cas_1.Exceptions.Utilisateur.UtilisateurPasTrouveeException;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.DTO.EnseignantDTO;
+import com.fsegs.genie_logiciel_etude_cas_1.Metier.DTO.CalculerMResponse;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.Matiere;
 import com.fsegs.genie_logiciel_etude_cas_1.Middleware.DTO.TokenDTO;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.DTO.UtilisateurDTO;
@@ -35,6 +36,7 @@ import java.util.Set;
 @Slf4j
 @RestController
 @RequestMapping("/enseignant")
+@CrossOrigin("*")
 public class EnseignantControlleur {
     @Autowired
     private EnseignantRep enseignantRep;
@@ -186,6 +188,24 @@ public class EnseignantControlleur {
         } catch (Exception e) {
             log.error("Error recalculating charges", e);
             return new ResponseEntity<>("Erreur lors du recalcul des charges",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'ENSEIGNANT')")
+    @GetMapping("/calculer-charge-surveillance")
+    public ResponseEntity<?> calculerM(@RequestParam int enseignantId) {
+        try {
+            Enseignant enseignant = enseignantRep.findById(enseignantId)
+                    .orElseThrow(() -> new UtilisateurPasTrouveeException("Enseignant pas trouve avec id: " + enseignantId));
+            
+            int m = enseignantService.calculerM(enseignant);
+            int chargeSurveillance = enseignantService.calculerChargeSurveillance(enseignant);
+            
+            return new ResponseEntity<>(new CalculerMResponse(enseignantId, m, chargeSurveillance), HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("Error calculating M for enseignant with id: {}", enseignantId, e);
+            return new ResponseEntity<>("Erreur lors du calcul de M pour l'enseignant",
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

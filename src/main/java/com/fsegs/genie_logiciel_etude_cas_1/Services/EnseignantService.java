@@ -21,6 +21,10 @@ public class EnseignantService {
         return enseignant.calculerM();
     }
 
+    public int calculerChargeSurveillance(Enseignant enseignant) {
+        return enseignant.calculerChargeSurveillance();
+    }
+
     public Enseignant fetchEnseignantFromUsername(String username) throws UtilisateurPasTrouveeException {
         return enseignantRep.findByUsername(username).orElseThrow(() -> new UtilisateurPasTrouveeException("pas trouvee"));
     }

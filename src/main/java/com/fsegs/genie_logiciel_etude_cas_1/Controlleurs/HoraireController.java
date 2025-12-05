@@ -15,6 +15,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/horaire")
+@CrossOrigin("*")
 public class HoraireController {
 
     @Autowired

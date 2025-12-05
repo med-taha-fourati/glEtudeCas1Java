@@ -40,6 +40,6 @@ class EnseignantTest {
 
         int result = enseignant.calculerChargeSurveillance();
 
-        assertEquals((int) (CHARGE_SURVEILLANCE_MOCK * 1.5) - 2, result-1); // rounding error
+        assertEquals(Math.max(((int) (CHARGE_SURVEILLANCE_MOCK * 1.5) - 2), 0), result-1); // rounding error
     }
 }

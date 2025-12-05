@@ -2,6 +2,7 @@ package com.fsegs.genie_logiciel_etude_cas_1.Controlleurs;
 
 import com.fsegs.genie_logiciel_etude_cas_1.Exceptions.Seance.SeancePasTrouveeException;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.DTO.SeanceDTO;
+import com.fsegs.genie_logiciel_etude_cas_1.Metier.DTO.CalculerNResponse;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.Seance;
 import com.fsegs.genie_logiciel_etude_cas_1.Services.SeanceService;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/seance")
+@CrossOrigin("*")
 public class SeanceController {
     private final SeanceService seanceService;
 
@@ -156,5 +158,22 @@ public class SeanceController {
     		return new ResponseEntity<>("Erreur lors du modification du status du seance", HttpStatus.INTERNAL_SERVER_ERROR);
     	}
     	
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'ENSEIGNANT')")
+    @GetMapping("/calculer-surveillants-requis")
+    public ResponseEntity<?> calculerN(@RequestParam int seanceId) {
+        try {
+            Seance seance = seanceService.getSeanceById(seanceId)
+                    .orElseThrow(() -> new SeancePasTrouveeException("Seance pas trouvee avec id: " + seanceId));
+            
+            int n = seanceService.calculerN(seance);
+            
+            return new ResponseEntity<>(new CalculerNResponse(seanceId, n), HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("Error calculating N for seance with id: {}", seanceId, e);
+            return new ResponseEntity<>("Erreur lors du calcul de N pour la seance",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

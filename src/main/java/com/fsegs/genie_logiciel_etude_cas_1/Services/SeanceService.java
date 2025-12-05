@@ -35,6 +35,10 @@ public class SeanceService {
         return seance.calculerN();
     }
 
+    public int calculerSurveillantsRequis(Seance seance ) {
+        return seance.calculerSurveillantsRequis();
+    }
+
     public List<Seance> getAllSeances() {
         return seanceRep.findAll();
     }

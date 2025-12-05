@@ -1,6 +1,7 @@
 package com.fsegs.genie_logiciel_etude_cas_1.Controlleurs;
 
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.DTO.EnseignantDTO;
+import com.fsegs.genie_logiciel_etude_cas_1.Metier.DTO.CalculerMResponse;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.DTO.UtilisateurDTO;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.Enseignant;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.Enumerations.EtatSurveillant;
@@ -123,5 +124,30 @@ class EnseignantControlleurTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(dto, response.getBody());
         verify(enseignantRep).save(any(Enseignant.class));
+    }
+
+    @Test
+    void calculerMReturnsCalculerMResponse() {
+        Enseignant enseignant = new Enseignant();
+        when(enseignantRep.findById(1)).thenReturn(Optional.of(enseignant));
+        when(enseignantService.calculerM(enseignant)).thenReturn(35);
+
+        ResponseEntity<?> response = enseignantControlleur.calculerM(1);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        CalculerMResponse calculerMResponse = (CalculerMResponse) response.getBody();
+        assertEquals(1, calculerMResponse.getEnseignantId());
+        assertEquals(35, calculerMResponse.getM());
+    }
+
+    @Test
+    void calculerMReturnsInternalServerErrorWhenEnseignantNotFound() {
+        when(enseignantRep.findById(1)).thenReturn(Optional.empty());
+
+        ResponseEntity<?> response = enseignantControlleur.calculerM(1);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("Erreur lors du calcul de M pour l'enseignant", response.getBody());
     }
 }
