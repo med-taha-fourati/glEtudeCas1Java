@@ -1,0 +1,55 @@
+@baseUrl = http://localhost:8080
+
+### Create Grade
+POST {{baseUrl}}/grade/add
+Content-Type: application/json
+
+{
+  "grade": 1,
+  "chargeSurveillance": 2
+}
+
+### Create Grade
+POST {{baseUrl}}/grade/add
+Content-Type: application/json
+
+{
+  "grade": 2,
+  "chargeSurveillance": 3
+}
+
+### Create Grade
+POST {{baseUrl}}/grade/add
+Content-Type: application/json
+
+{
+  "grade": 3,
+  "chargeSurveillance": 4
+}
+
+### Create Grade
+POST {{baseUrl}}/grade/add
+Content-Type: application/json
+
+{
+  "grade": 4,
+  "chargeSurveillance": 6
+}
+
+### Create Grade
+POST {{baseUrl}}/grade/add
+Content-Type: application/json
+
+{
+  "grade": 5,
+  "chargeSurveillance": 7
+}
+
+### Create Grade
+POST {{baseUrl}}/grade/add
+Content-Type: application/json
+
+{
+  "grade": 6,
+  "chargeSurveillance": 10
+}

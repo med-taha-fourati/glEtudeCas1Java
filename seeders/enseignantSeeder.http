@@ -1,0 +1,76 @@
+@baseUrl = http://localhost:8080
+
+### Register Enseignant (requires an existing Grade)
+POST {{baseUrl}}/enseignant/register
+Content-Type: application/json
+
+{
+  "username": "fouratier",
+  "password": "taha",
+  "nom": "Dupont",
+  "prenom": "Jean",
+  "tel": 12345678,
+  "gradeId": 1,
+  "matiere": [],
+  "etatSurveillant": "SURVEILLANT"
+}
+
+### Register Enseignant (requires an existing Grade)
+POST {{baseUrl}}/enseignant/register
+Content-Type: application/json
+
+{
+  "username": "fourati",
+  "password": "taha",
+  "nom": "Dupont",
+  "prenom": "Jean",
+  "tel": 12345678,
+  "gradeId": 2,
+  "matiere": [],
+  "etatSurveillant": "SURVEILLANT"
+}
+
+### Register Enseignant (requires an existing Grade)
+POST {{baseUrl}}/enseignant/register
+Content-Type: application/json
+
+{
+  "username": "sadak",
+  "password": "f9i",
+  "nom": "saddouk",
+  "prenom": "fki",
+  "tel": 12345678,
+  "gradeId": 3,
+  "matiere": [],
+  "etatSurveillant": "SURVEILLANT"
+}
+
+### Register Enseignant (requires an existing Grade)
+POST {{baseUrl}}/enseignant/register
+Content-Type: application/json
+
+{
+  "username": "jen",
+  "password": "jakrossou",
+  "nom": "jen",
+  "prenom": "jakrooosu",
+  "tel": 12345678,
+  "gradeId": 4,
+  "matiere": [],
+  "etatSurveillant": "PAS_SURVEILLANT"
+}
+
+### Register Enseignant (requires an existing Grade)
+POST {{baseUrl}}/enseignant/register
+Content-Type: application/json
+
+{
+  "username": "kate",
+  "password": "kate",
+  "nom": "Kaite",
+  "prenom": "Hondfsz",
+  "tel": 12345678,
+  "gradeId": 3,
+  "matiere": [],
+  "etatSurveillant": "SURVEILLANT"
+}

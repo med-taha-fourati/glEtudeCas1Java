@@ -30,6 +30,7 @@ public class Enseignant extends Utilisateur {
 //    private String username;
 //    private String password;
 
+    @Enumerated(EnumType.STRING)
     private EtatSurveillant etatSurveillant;
 
     @ManyToOne(cascade = CascadeType.ALL)

@@ -41,7 +41,6 @@ public class Seance {
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "seances", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JsonIgnoreProperties({"seances", "matieres", "grade"})
-    @JsonIgnore
     private Set<Enseignant> enseignants = new HashSet<>();
 
     @OneToMany(mappedBy = "seance", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

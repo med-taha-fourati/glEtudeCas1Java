@@ -1,0 +1,136 @@
+# Base configuration
+@baseUrl = http://localhost:8080
+# Replace with a real JWT for a user with ROLE_ADMIN (or appropriate role)
+@AUTH_TOKEN = your-jwt-token-here
+
+# Known IDs (adjust these after creating and fetching real data)
+@gradeId = 1
+@seanceId = 1
+
+### Login (example) — adjust username/password to an existing user
+POST {{baseUrl}}/enseignant/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin"
+}
+
+### Create Grade
+POST {{baseUrl}}/grade/add
+Content-Type: application/json
+
+{
+  "grade": 1,
+  "chargeSurveillance": 10
+}
+
+### List Grades
+GET {{baseUrl}}/grade/
+Authorization: Bearer {{AUTH_TOKEN}}
+
+### Create Horaire
+POST {{baseUrl}}/horaire/add
+Content-Type: application/json
+Authorization: Bearer {{AUTH_TOKEN}}
+
+{
+  "hDebut": 8,
+  "hFin": 10
+}
+
+### List Horaires
+GET {{baseUrl}}/horaire/
+Authorization: Bearer {{AUTH_TOKEN}}
+
+### Create Seance
+POST {{baseUrl}}/seance/add
+Content-Type: application/json
+Authorization: Bearer {{AUTH_TOKEN}}
+
+{
+  "jour": 15,
+  "mois": 6,
+  "annee": 2025,
+  "horaireHDebut": 8,
+  "horaireHFin": 10
+}
+
+### List Seances
+GET {{baseUrl}}/seance/fetchAll
+Authorization: Bearer {{AUTH_TOKEN}}
+
+### Create Matiere (requires an existing Seance)
+POST {{baseUrl}}/matiere/add
+Content-Type: application/json
+Authorization: Bearer {{AUTH_TOKEN}}
+
+{
+  "nom": "Maths",
+  "nbPaquets": 5,
+  "seanceId": {{seanceId}}
+}
+
+### List Matieres
+GET {{baseUrl}}/matiere/fetchAll
+Authorization: Bearer {{AUTH_TOKEN}}
+
+### Register Enseignant (requires an existing Grade)
+POST {{baseUrl}}/enseignant/register
+Content-Type: application/json
+
+{
+  "username": "fouratier",
+  "password": "taha",
+  "nom": "Dupont",
+  "prenom": "Jean",
+  "tel": 12345678,
+  "gradeId": 1,
+  "matiere": [],
+  "etatSurveillant": "SURVEILLANT"
+}
+
+### enseignant 2
+PUT {{baseUrl}}/enseignant/edit?id=22
+Content-Type: application/json
+
+{
+  "username": "enseignant2",
+  "password": "password",
+  "nom": "Dupont",
+  "prenom": "Jean the 2nd",
+  "tel": 12345678,
+  "gradeId": 1,
+  "matiere": [3],
+  "etatSurveillant": "SURVEILLANT"
+}
+
+### enseignant 3
+POST {{baseUrl}}/enseignant/register
+Content-Type: application/json
+
+{
+  "username": "enseignant3",
+  "password": "password",
+  "nom": "Dupont",
+  "prenom": "Jean the 2nd",
+  "tel": 12345678,
+  "gradeId": {{gradeId}},
+  "matiere": [],
+  "etatSurveillant": "SURVEILLANT"
+}
+
+### enseignant 4
+POST {{baseUrl}}/enseignant/register
+Content-Type: application/json
+
+{
+  "username": "enseignant4",
+  "password": "password",
+  "nom": "Leonardo",
+  "prenom": "Davinci",
+  "tel": 12345678,
+  "gradeId": 3,
+  "matiere": [],
+  "etatSurveillant": "SURVEILLANT"
+}

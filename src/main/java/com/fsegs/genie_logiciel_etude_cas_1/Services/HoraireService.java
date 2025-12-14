@@ -30,7 +30,7 @@ public class HoraireService {
 
     public Horaire createHoraire(HoraireDTO horaireDTO) {
         Horaire horaire = new Horaire();
-        if (horaire.twoHourDurationCheck(horaireDTO.hDebut, horaireDTO.hFin)) {
+        if (!horaire.twoHourDurationCheck(horaireDTO.hDebut, horaireDTO.hFin)) {
             throw new IllegalArgumentException("Horaires doivent avoir une duration de 2 heures");
         }
         EmbHoraire embHoraire = new EmbHoraire(horaireDTO.hDebut, horaireDTO.hFin);

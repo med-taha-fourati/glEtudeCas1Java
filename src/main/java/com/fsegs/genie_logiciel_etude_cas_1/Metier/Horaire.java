@@ -22,7 +22,7 @@ public class Horaire {
     private EmbHoraire embHoraire;
 
     public boolean twoHourDurationCheck(int horaireDebut, int horaireFin) {
-        return (horaireFin - horaireDebut) == 2;
+        return Math.abs(horaireFin - horaireDebut) == 2;
     }
 
     @OneToMany(mappedBy = "horaire", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

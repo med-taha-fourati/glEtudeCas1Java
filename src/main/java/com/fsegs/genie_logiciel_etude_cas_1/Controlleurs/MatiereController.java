@@ -44,7 +44,7 @@ public class MatiereController {
             matierew.setNom(matiere.nom);
             matierew.setNbPaquets(matiere.nbPaquets);
 
-            Seance tr = seanceRep.findById(matiere.seanceId).orElseThrow(()->new RuntimeException());
+            Seance tr = seanceRep.findById(matiere.seanceId).orElse(null);
             matierew.setSeance(tr);
 
             matiereRep.save(matierew);
@@ -65,7 +65,7 @@ public class MatiereController {
             matierew.setNbPaquets(matiere.nbPaquets);
 
             //TODO: MAKE NULLABLE IN THE FUTURE
-            Seance tr = seanceRep.findById(matiere.seanceId).orElseThrow(()->new RuntimeException());
+            Seance tr = seanceRep.findById(matiere.seanceId).orElse(null);
             matierew.setSeance(tr);
 
             matiereRep.save(matierew);

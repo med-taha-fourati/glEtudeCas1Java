@@ -5,6 +5,7 @@ import com.fsegs.genie_logiciel_etude_cas_1.Metier.DTO.SeanceDTO;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.Embeddables.EmbHoraire;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.Enseignant;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.Horaire;
+import com.fsegs.genie_logiciel_etude_cas_1.Metier.Matiere;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.Seance;
 import com.fsegs.genie_logiciel_etude_cas_1.Repertoires.EnseignantRep;
 import com.fsegs.genie_logiciel_etude_cas_1.Repertoires.HoraireRep;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -131,6 +133,10 @@ public class SeanceService {
 
         if (enseignantASeanceEnConflit(enseignant, seance.getSeanceDate(), seance.getHoraire())) {
             throw new IllegalStateException("Vous avez deja une seance a cet horaire");
+        }
+
+        if (!Collections.disjoint(enseignant.getMatieres(), seance.getMatieres())) {
+            throw new IllegalStateException("ceci est ton matiere");
         }
 
         enseignant.getSeances().add(seance);

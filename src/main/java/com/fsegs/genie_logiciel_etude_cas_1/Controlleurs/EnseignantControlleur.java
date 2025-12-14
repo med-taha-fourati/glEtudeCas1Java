@@ -122,7 +122,7 @@ public class EnseignantControlleur {
 
             nouvel.setGrade(er);
             nouvel.setTel(details.tel);
-            nouvel.setEtatSurveillant(EtatSurveillant.PAS_SURVEILLANT);
+            nouvel.setEtatSurveillant(details.etatSurveillant);
 
             nouvel.setM(enseignantService.calculerM(nouvel));
 

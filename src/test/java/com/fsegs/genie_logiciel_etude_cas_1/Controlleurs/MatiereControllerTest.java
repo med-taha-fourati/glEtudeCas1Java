@@ -58,7 +58,6 @@ class MatiereControllerTest {
         MatiereDTO dto = new MatiereDTO();
         dto.nom = "Test";
         dto.nbPaquets = 3;
-        dto.seanceId = 1;
 
         Seance seance = new Seance();
         when(seanceRep.findById(1)).thenReturn(Optional.of(seance));
