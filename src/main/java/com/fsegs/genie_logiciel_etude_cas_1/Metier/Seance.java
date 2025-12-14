@@ -39,18 +39,21 @@ public class Seance {
     
     private boolean passeeExamen = false;
 
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "seances")
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "seances", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JsonIgnoreProperties({"seances", "matieres", "grade"})
     @JsonIgnore
     private Set<Enseignant> enseignants = new HashSet<>();
 
-    @OneToMany(mappedBy = "seance", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "seance", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties({"seance", "enseignants"})
     private Set<Matiere> matieres = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JsonIgnoreProperties({"seances"})
     private Horaire horaire;
+
+    //TODO: add salle for clarification;
+    //private int salle;
 
     public int calculerN() {
         //assert matieres != null; remove for prod

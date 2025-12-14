@@ -9,8 +9,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 
 import java.util.List;
 import java.util.Set;
@@ -28,12 +26,12 @@ public class Matiere {
     private String nom;
     private int nbPaquets;
 
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "matieres")
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "matieres", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     //@JsonIgnoreProperties({"matieres", "seances", "grade"})
     @JsonIgnore
     private Set<Enseignant> enseignants;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     //@JsonIgnoreProperties({"matieres", "enseignants", "horaire"})
     @JsonIgnore
     private Seance seance;

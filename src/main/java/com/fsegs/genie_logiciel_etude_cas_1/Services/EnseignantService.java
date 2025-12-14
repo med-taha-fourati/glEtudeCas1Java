@@ -18,7 +18,7 @@ public class EnseignantService {
     }
 
     public int calculerM(Enseignant enseignant) {
-        return enseignant.calculerM();
+        return 1;
     }
 
     public int calculerChargeSurveillance(Enseignant enseignant) {

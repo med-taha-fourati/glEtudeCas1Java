@@ -32,7 +32,7 @@ public class SeanceService {
     }
 
     public int calculerN(Seance seance) {
-        return seance.calculerN();
+        return seance.calculerSurveillantsRequis();
     }
 
     public int calculerSurveillantsRequis(Seance seance ) {
@@ -117,6 +117,10 @@ public class SeanceService {
             throw new IllegalStateException("Le calendrier est verrouille, impossible de soumettre des voeux");
         }
 
+        if (enseignant.maxChargeAtteint()) {
+            throw new IllegalStateException("Le nombre de charge est 0, vous dever debarrasser des seances");
+        }
+
         if (seance.estSaturee()) {
             throw new IllegalStateException("Cette seance est saturee");
         }
@@ -135,6 +139,28 @@ public class SeanceService {
         enseignantRep.save(enseignant);
         seanceRep.save(seance);
     }
+
+    @Transactional
+    public void retirerVoeu(int enseignantId, int seanceId) {
+        Enseignant enseignant = enseignantRep.findById(enseignantId)
+            .orElseThrow(() -> new RuntimeException("Enseignant pas trouve"));
+        Seance seance = seanceRep.findById(seanceId)
+            .orElseThrow(() -> new SeancePasTrouveeException("Seance pas trouvee"));
+
+        if (seance.isVerrouillee()) {
+            throw new IllegalStateException("Le calendrier est verrouille, impossible de retirer des voeux");
+        }
+
+        if (!enseignant.getSeances().contains(seance)) {
+            throw new IllegalStateException("Vous n'avez pas de voeu pour cette seance");
+        }
+
+        enseignant.getSeances().remove(seance);
+        seance.getEnseignants().remove(enseignant);
+
+        enseignantRep.save(enseignant);
+        seanceRep.save(seance);
+}
 
     @Transactional
     public void verrouillerCalendrier(boolean verrouiller) {

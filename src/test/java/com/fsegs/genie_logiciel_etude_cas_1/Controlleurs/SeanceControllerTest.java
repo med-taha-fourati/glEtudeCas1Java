@@ -87,11 +87,31 @@ class SeanceControllerTest {
     }
 
     @Test
+    void retirerVoeuReturnsOkOnSuccess() {
+        doNothing().when(seanceService).retirerVoeu(1, 2);
+
+        ResponseEntity<?> response = seanceController.retirerVoeu(1, 2);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
     void soumettreVoeuReturnsBadRequestOnIllegalState() {
         RuntimeException ex = new IllegalStateException("error");
         org.mockito.Mockito.doThrow(ex).when(seanceService).soumettreVoeu(1, 2);
 
         ResponseEntity<?> response = seanceController.soumettreVoeu(1, 2);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("error", response.getBody());
+    }
+
+    @Test
+    void retirerVoeuReturnsBadRequestOnIllegalState() {
+        RuntimeException ex = new IllegalStateException("error");
+        org.mockito.Mockito.doThrow(ex).when(seanceService).retirerVoeu(1, 2);
+
+        ResponseEntity<?> response = seanceController.retirerVoeu(1, 2);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals("error", response.getBody());

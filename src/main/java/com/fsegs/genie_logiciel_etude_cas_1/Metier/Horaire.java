@@ -21,7 +21,11 @@ public class Horaire {
     @EmbeddedId
     private EmbHoraire embHoraire;
 
-    @OneToMany(mappedBy = "horaire", fetch = FetchType.LAZY)
+    public boolean twoHourDurationCheck(int horaireDebut, int horaireFin) {
+        return (horaireFin - horaireDebut) == 2;
+    }
+
+    @OneToMany(mappedBy = "horaire", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties({"seances", "horaire", "enseignants", "matieres"})
     private Set<Seance> seances;
 }

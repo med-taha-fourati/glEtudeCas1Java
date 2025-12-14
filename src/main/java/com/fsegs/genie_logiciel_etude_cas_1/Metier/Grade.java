@@ -20,11 +20,13 @@ import java.util.Set;
 @Entity
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Grade {
-    @Id private int id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
     private int grade;
     private int chargeSurveillance;
 
-    @OneToMany(mappedBy = "grade", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "grade", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JsonIgnoreProperties({"grade", "matieres", "seances"})
     @JsonIgnore
     private Set<Enseignant> enseignants = new HashSet<>();

@@ -120,6 +120,22 @@ public class SeanceController {
         }
     }
 
+    @PreAuthorize("hasRole('ENSEIGNANT')")
+    @DeleteMapping("/retirer-voeu")
+    public ResponseEntity<?> retirerVoeu(@RequestParam int enseignantId, @RequestParam int seanceId) {
+        try {
+            seanceService.retirerVoeu(enseignantId, seanceId);
+            return new ResponseEntity<>("Voeu retire avec succes", HttpStatus.OK);
+        } catch (IllegalStateException e) {
+            log.error("Error removing wish", e);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            log.error("Error removing wish", e);
+            return new ResponseEntity<>("Erreur lors du retrait du voeu",
+                HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/verrouiller")
     public ResponseEntity<?> verrouillerCalendrier(@RequestParam boolean verrouiller) {

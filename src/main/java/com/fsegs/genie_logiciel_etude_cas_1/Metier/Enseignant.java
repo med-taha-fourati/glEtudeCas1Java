@@ -8,7 +8,6 @@ import com.fsegs.genie_logiciel_etude_cas_1.Metier.Enumerations.EtatSurveillant;
 import com.fsegs.genie_logiciel_etude_cas_1.Metier.Enumerations.Role;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Cascade;
 import org.springframework.context.annotation.Bean;
 
 import java.util.HashSet;
@@ -33,10 +32,10 @@ public class Enseignant extends Utilisateur {
 
     private EtatSurveillant etatSurveillant;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Grade grade;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JsonIgnoreProperties({"enseignants", "seance"})
     private Set<Matiere> matieres = new  HashSet<>();
 
@@ -46,7 +45,7 @@ public class Enseignant extends Utilisateur {
 
     private int anciennete = 0;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JsonIgnoreProperties({"enseignants", "matieres", "horaire"})
     private Set<Seance> seances = new HashSet<>();
 
@@ -62,5 +61,13 @@ public class Enseignant extends Utilisateur {
         int chargeEnseignement = grade.getChargeSurveillance();
         int nbSeancesMatieres = seances.size();
         return Math.max(((int) (chargeEnseignement * 1.5) - nbSeancesMatieres), 0);
+    }
+
+    public boolean maxMAtteint() {
+        return this.calculerM() <= 0;
+    }
+
+    public boolean maxChargeAtteint() {
+        return this.calculerChargeSurveillance() <= 0;
     }
 }
